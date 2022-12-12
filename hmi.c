@@ -73,25 +73,31 @@
  */
  
 /* State definitions */
-#define HMI_S_TUNE			0
-#define HMI_S_MODE			1
-#define HMI_S_AGC			2
-#define HMI_S_PRE			3
-#define HMI_S_VOX			4
-#define HMI_S_BPF			5
-#define HMI_NSTATES			6
+typedef enum
+{
+	HMI_S_TUNE = 0,
+	HMI_S_MODE = 1,
+	HMI_S_AGC = 2,
+	HMI_S_PRE = 3,
+	HMI_S_VOX = 4,
+	HMI_S_BPF = 5,
+	HMI_NSTATES,
+}HMI_STATE;
 
 /* Event definitions */
-#define HMI_E_NOEVENT		0
-#define HMI_E_INCREMENT		1
-#define HMI_E_DECREMENT		2
-#define HMI_E_ENTER			3
-#define HMI_E_ESCAPE		4
-#define HMI_E_LEFT			5
-#define HMI_E_RIGHT			6
-#define HMI_E_PTTON			7
-#define HMI_E_PTTOFF		8
-#define HMI_NEVENTS			9
+typedef enum
+{
+	HMI_E_NOEVENT = 0,
+	HMI_E_INCREMENT = 1,
+	HMI_E_DECREMENT = 2,
+	HMI_E_ENTER = 3,
+	HMI_E_ESCAPE = 4,
+	HMI_E_LEFT = 5,
+	HMI_E_RIGHT = 6,
+	HMI_E_PTTON = 7,
+	HMI_E_PTTOFF = 8,
+	HMI_NEVENTS,
+}HMI_EVENT;
 
 /* Sub menu option string sets */
 #define HMI_NTUNE	6
@@ -101,12 +107,12 @@
 #define HMI_NVOX	4
 #define HMI_NBPF	5
 char hmi_noption[HMI_NSTATES] = {HMI_NTUNE, HMI_NMODE, HMI_NAGC, HMI_NPRE, HMI_NVOX, HMI_NBPF};
-char hmi_o_menu[HMI_NSTATES][8] = {"Tune","Mode","AGC","Pre","VOX"};		// Indexed by hmi_state
-char hmi_o_mode[HMI_NMODE][8] = {"USB","LSB","AM ","CW "};					// Indexed by hmi_sub[HMI_S_MODE]
-char hmi_o_agc [HMI_NAGC][8] = {"NoGC","Slow","Fast"};						// Indexed by hmi_sub[HMI_S_AGC]
-char hmi_o_pre [HMI_NPRE][8] = {"-30dB","-20dB","-10dB","  0dB","+10dB"};	// Indexed by hmi_sub[HMI_S_PRE]
-char hmi_o_vox [HMI_NVOX][8] = {"NoVOX","VOX-L","VOX-M","VOX-H"};			// Indexed by hmi_sub[HMI_S_VOX]
-char hmi_o_bpf [HMI_NBPF][8] = {"<2.5","2-6","5-12","10-24","20-40"};		// Indexed by 
+const char* hmi_o_menu[HMI_NSTATES] = {"Tune","Mode","AGC","Pre","VOX"};		// Indexed by hmi_state
+const char* hmi_o_mode[HMI_NMODE] = {"USB","LSB","AM ","CW "};					// Indexed by hmi_sub[HMI_S_MODE]
+const char* hmi_o_agc [HMI_NAGC] = {"NoGC","Slow","Fast"};						// Indexed by hmi_sub[HMI_S_AGC]
+const char* hmi_o_pre [HMI_NPRE] = {"-30dB","-20dB","-10dB","  0dB","+10dB"};	// Indexed by hmi_sub[HMI_S_PRE]
+const char* hmi_o_vox [HMI_NVOX] = {"NoVOX","VOX-L","VOX-M","VOX-H"};			// Indexed by hmi_sub[HMI_S_VOX]
+const char* hmi_o_bpf [HMI_NBPF] = {"<2.5","2-6","5-12","10-24","20-40"};		// Indexed by 
 
 // Map option to setting
 int  hmi_mode[HMI_NMODE] = {MODE_USB, MODE_LSB, MODE_AM, MODE_CW};
@@ -116,7 +122,8 @@ int  hmi_vox[HMI_NVOX]   = {VOX_OFF, VOX_LOW, VOX_MEDIUM, VOX_HIGH};
 int  hmi_bpf[HMI_NBPF]   = {REL_LPF2, REL_BPF6, REL_BPF12, REL_BPF24, REL_BPF40};
 
 
-int  hmi_state, hmi_option;													// Current state and menu option selection
+HMI_STATE  hmi_state;														// Current state
+int hmi_option;																// menu option selection
 int  hmi_sub[HMI_NSTATES] = {4,0,0,3,0,2};									// Stored option selection per state
 bool hmi_update;															// LCD needs update
 
@@ -128,7 +135,7 @@ uint32_t hmi_step[6] = {10000000, 1000000, 100000, 10000, 1000, 100};		// Freque
 																			// Set to 2 for certain types of mixer
 
 #define PTT_DEBOUNCE	3													// Nr of cycles for debounce
-int ptt_state;																// Debounce counter
+int8_t ptt_state;															// Debounce counter
 bool ptt_active;															// Resulting state
 
 /*
@@ -148,7 +155,7 @@ bool ptt_active;															// Resulting state
  */
 void hmi_callback(uint gpio, uint32_t events)
 {
-	uint8_t evt=HMI_E_NOEVENT;
+	HMI_EVENT evt=HMI_E_NOEVENT;
 
 	// Decide what the event was
 	switch (gpio)

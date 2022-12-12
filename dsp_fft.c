@@ -122,7 +122,7 @@ volatile uint32_t dsp_tickx  = 0;											// Load indicator DSP loop
  */
 void  __not_in_flash_func(dsp_bandpass)(int lowbin, int highbin, int sign)
 {
-	int i, lo1, lo2, hi1, hi2;
+	int i, lo1 = 0, lo2 = 0, hi1 = FFT_SIZE, hi2 = FFT_SIZE;
 	
 	if ((lowbin<3)||(highbin>(FFT_SIZE/2-3))||(highbin-lowbin<6)) return;
 	
@@ -316,7 +316,7 @@ bool __not_in_flash_func(tx)(void)
 	xqp = &XQ_buf[0];
 	for (i=0; i<BUFSIZE; i++)
 	{
-		*xip++ = *ip++;
+		*xip++ = *ap++;
 		*xqp++ = 0;
 	}
 	if (++b > 2) b = 0;														// Point to New Saved sample buffer
@@ -324,7 +324,7 @@ bool __not_in_flash_func(tx)(void)
 	xqp = &XQ_buf[BUFSIZE];
 	for (i=0; i<BUFSIZE; i++)
 	{
-		*xip++ = *ip++;
+		*xip++ = *ap++;
 		*xqp++ = 0;
 	}
 

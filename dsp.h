@@ -41,22 +41,28 @@ int get_sval(void);
 
 extern volatile bool tx_enabled;			// Determined by (vox_active || ptt_active)
 
-#define VOX_OFF			0
-#define VOX_LOW			1
-#define VOX_MEDIUM		2
-#define VOX_HIGH		3
-void dsp_setvox(int vox);
+typedef enum {
+    VOX_OFF = 0,
+    VOX_LOW = 1,
+    VOX_MEDIUM = 2,
+    VOX_HIGH = 3,
+}VOX_TYPE;
+void dsp_setvox(VOX_TYPE vox);
 
-#define MODE_USB		0
-#define MODE_LSB		1
-#define MODE_AM			2
-#define MODE_CW			3
-void dsp_setmode(int mode);
+typedef enum {
+    MODE_USB  = 0,
+    MODE_LSB  = 1,
+    MODE_AM  = 2,
+    MODE_CW  = 3,
+}MODE_TYPE;
+void dsp_setmode(MODE_TYPE mode);
 
-#define AGC_NONE		0
-#define AGC_SLOW		1
-#define AGC_FAST		2
-void dsp_setagc(int agc);
+typedef enum {
+    AGC_NONE = 0,
+    AGC_SLOW = 1,
+    AGC_FAST = 2,
+}AGC_TYPE;
+void dsp_setagc(AGC_TYPE agc);
 
 void dsp_init();
 

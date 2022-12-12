@@ -56,8 +56,8 @@ volatile uint16_t dac_iq, dac_audio;
  * MODE is modulation/demodulation 
  * This setting steers the signal processing branch chosen
  */
-volatile int dsp_mode;
-void dsp_setmode(int mode)
+static volatile MODE_TYPE dsp_mode;
+void dsp_setmode(MODE_TYPE mode)
 {
 	dsp_mode = mode;
 }
@@ -119,10 +119,10 @@ int get_sval(void)
 #define AGC_SHORT	64
 #define AGC_LONG	4096
 #define AGC_DIS		32766
-volatile uint16_t agc_decay  = AGC_DIS;
-volatile uint16_t agc_attack = AGC_DIS;
+static volatile uint16_t agc_decay  = AGC_DIS;
+static volatile uint16_t agc_attack = AGC_DIS;
 
-void dsp_setagc(int agc)
+void dsp_setagc(AGC_TYPE agc)
 {
 	switch(agc)
 	{
@@ -149,10 +149,10 @@ void dsp_setagc(int agc)
  */
 #define VOX_LINGER		500													// 500msec
 
-volatile uint16_t vox_count = 0;
-volatile uint16_t vox_level = 0;
-volatile bool	  vox_active;												// Is set when audio energy > vox level (and not OFF)
-void dsp_setvox(int vox)
+static volatile uint16_t vox_count = 0;
+static volatile uint16_t vox_level = 0;
+static volatile bool	  vox_active;												// Is set when audio energy > vox level (and not OFF)
+void dsp_setvox(VOX_TYPE vox)
 {
 	switch(vox)
 	{
@@ -402,8 +402,6 @@ bool __not_in_flash_func(dsp_callback)(repeating_timer_t *t)
 /** CORE1: DSP loop, triggered through repeating timer/semaphore **/
 void __not_in_flash_func(dsp_loop)()
 {
-	uint32_t cmd;
-	uint16_t slice_num;
 	alarm_pool_t *ap;
 	
 	tx_enabled = false;	

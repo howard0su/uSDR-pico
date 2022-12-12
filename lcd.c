@@ -242,8 +242,6 @@ void lcd_clear(void)
 
 void lcd_curxy(uint8_t x, uint8_t y, bool on)
 {
-	uint8_t txdata[3];
-
 	x &= 0x0f;																// Clip range
 	y &= 0x01;
 	lcd_sendbyte(true, (x | 0x80 | (y==1?0x40:0x00)));
@@ -260,15 +258,13 @@ void lcd_putxy(uint8_t x, uint8_t y, uint8_t c)
 
 void lcd_writexy(uint8_t x, uint8_t y, uint8_t *s)
 {
-	uint8_t i, len;
+	uint8_t i;
 
 	x &= 0x0f;																// Clip range
 	y &= 0x01;
 	lcd_sendbyte(true, (x | 0x80 | (y==1?0x40:0x00)));
 
-	len = strlen(s);
-	len = (len>(16-x))?(16-x):len;											// Clip range
-	for(i=0; i<len; i++)
+	for(i=0; i<(16 - x) && s[i] != '\0'; i++)
 		lcd_sendbyte(false, s[i]);
 }
 
